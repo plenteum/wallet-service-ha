@@ -21,6 +21,7 @@ It also provides *easy access* to the walletd RPC API via native [Javascript Pro
 
 1. Launch a WebSocket around the wrapper that allows the events to fire off to a third-party application.
 2. Expose all walletd RPC APIs in the package to the WebSocket
+3. After the wallet container is synced, compare the wallet height to the network_height of the daemon (or public node) to detect if the wallet is out of sync.
 
 ## Dependencies
 
