@@ -99,6 +99,9 @@ const Walletd = function (opts) {
       } else {
         cnt = 1
       }
+      if ((height + cnt) > this.knownBlockCount) {
+        cnt = (this.knownBlockCount - height - 1)
+      }
       this.emit('scan', height, (height + cnt))
       this.api.getTransactions({
         firstBlockIndex: height,
