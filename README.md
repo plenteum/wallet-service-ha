@@ -516,10 +516,10 @@ Methods noted having options have parameters that may be *optional* or *required
 ```javascript
 {
   "transaction": {
-    "amount": 1000,
+    "amount": 10,
     "blockIndex": 469419,
     "extra": "014fa15a893c92e040fc97c8bda6d811685a269309b37ad444755099cbed6d8438",
-    "fee": 10,
+    "fee": 0.1,
     "isBase": false,
     "paymentId": "",
     "state": 0,
@@ -528,17 +528,17 @@ Methods noted having options have parameters that may be *optional* or *required
     "transfers": [
       {
         "address": "TRTLv2MXbzaPYVYqtdNwYpKY7azcVjBjsETN188BpKwi2q83NibqJWtFYL9CHxpWph2wCPZcJ6tkPfUxVZcUN8xmYsSDJYpcE3D",
-        "amount": 1000,
+        "amount": 10,
         "type": 0
       },
       {
         "address": "",
-        "amount": -2000,
+        "amount": -20,
         "type": 0
       },
       {
         "address": "",
-        "amount": 990,
+        "amount": 9.9,
         "type": 0
       }
     ],
