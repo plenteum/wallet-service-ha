@@ -16,7 +16,7 @@ It also provides *easy access* to the walletd RPC API via native [Javascript Pro
    1. [Methods](#methods)
    2. [Events](#events)
    3. [Walletd RPC API Interface](#walletd-rpc-api-interface)
-   4. [WebSocket Connections](#webSocket-connections)
+   4. [WebSocket Connections](#websocket-connections)
  
 ## To Do
 
