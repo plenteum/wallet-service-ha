@@ -13,9 +13,9 @@ It also provides *easy access* to the walletd RPC API via native [Javascript Pro
 3. [Easy Start](#easy-start)
 4. [Keep it Running](#keep-it-running)
 5. [Documentation](#documentation)
-  1. [Methods](#methods)
-  2. [Events](#events)
-  3. [Walletd RPC API Interface](#walletd-rpc-api-interface)
+   1. [Methods](#methods)
+   2. [Events](#events)
+   3. [Walletd RPC API Interface](#walletd-rpc-api-interface)
  
 ## To Do
 
