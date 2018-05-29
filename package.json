@@ -1,0 +1,20 @@
+{
+  "name": "walletd-ha",
+  "version": "0.5.0",
+  "description": "Wraps the TurtleCoin walletd process and helps keep it up and running and ready for connections.",
+  "main": "walletd-ha.js",
+  "scripts": {
+    "test": "standard"
+  },
+  "author": "Brandon Lehmann <brandonlehmann@gmail.com>",
+  "license": "GPL",
+  "devDependencies": {
+    "standard": "^11.0.1"
+  },
+  "dependencies": {
+    "node-pty": "^0.7.4",
+    "node-storage": "0.0.7",
+    "request": "^2.87.0",
+    "request-promise": "^4.2.2"
+  }
+}
