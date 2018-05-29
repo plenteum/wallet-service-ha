@@ -8,14 +8,14 @@ It also provides *easy access* to the walletd RPC API via native [Javascript Pro
 
 ## Table of Contents
 
-1. [To Do](#To-do)
-2. [Dependencies](#Dependencies)
-3. [Easy Start](#Easy-Start)
-4. [Keep it Running](#Keep-it-Running)
-5. [Documentation](#Documentation)
- (i) [Methods](#Methods)
- (ii) [Events](#Events)
- (iii) [Walletd RPC API Interface](#Walletd-RPC-API-Interface)
+1. [To Do](#to-do)
+2. [Dependencies](#dependencies)
+3. [Easy Start](#easy-start)
+4. [Keep it Running](#keep-it-running)
+5. [Documentation](#documentation)
+  1. [Methods](#methods)
+  2. [Events](#events)
+  3. [Walletd RPC API Interface](#walletd-rpc-api-interface)
  
 ## To Do
 
