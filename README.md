@@ -19,7 +19,6 @@ It also provides *easy access* to the walletd RPC API via native [Javascript Pro
  
 ## To Do
 
-1. Launch a WebSocket around the wrapper that allows the events to fire off to a third-party application.
 2. Expose all walletd RPC APIs in the package to the WebSocket
 3. After the wallet container is synced, compare the wallet height to the network_height of the daemon (or public node) to detect if the wallet is out of sync.
 
@@ -73,6 +72,7 @@ var wallet = new Walletd({
   scanInterval: 5, // scan the wallet for new transactions every x seconds as long as the wallet is synced
   timeout: 2000, // consider RPC calls timed out after x milliseconds
   path: './walletd', // the path to the walletd binary
+  enableWebSocket: true, // enable the WebSocket server at bindPort + 1
   
   // Standard walletd options start here
   config: false, // the path to a walletd config file -- if you so choose
@@ -84,7 +84,7 @@ var wallet = new Walletd({
   containerFile: false, // The path to your walletd container file
   containerPassword: false, // The password to your walletd container file
   logFile: false, // The path to the log file you would like walletd to keep
-  logLevel: 1, // The log level to use with walletd
+  logLevel: 4, // The log level to use with walletd
   syncFromZero: false, // If set to true, will tell walletd to always sync the container from zero.
   daemonAddress: '127.0.0.1', // When using a remote node (localNode === false), provide the IP address or hostname of the daemon here
   daemonPort: 11898, // Remote daemon port
@@ -676,3 +676,7 @@ This method creates a transfer object designed to be used with *wallet.api.sendT
   "totalOutputCount": 19
 }
 ```
+
+## WebSocket Connections
+
+A WebSocket [socket.io](https://socket.io/)

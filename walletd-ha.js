@@ -1,6 +1,7 @@
 'use strict'
 
 const WalletdRPC = require('./lib/walletd-rpc.js')
+const WebSocket = require('./lib/websocket.js')
 const pty = require('node-pty')
 const util = require('util')
 const inherits = require('util').inherits
@@ -20,6 +21,7 @@ const Walletd = function (opts) {
   this.scanInterval = opts.scanInterval || 5
   this.maxPollingFailures = opts.maxPollingFailures || 3
   this.timeout = opts.timeout || 2000
+  this.enableWebSocket = opts.enableWebSocket || true
 
   // Begin walletd options
   this.path = opts.path || path.resolve(__dirname, './walletd')
@@ -40,7 +42,7 @@ const Walletd = function (opts) {
   // this.spendKey = opts.spendKey || false
   // this.mnemonicSeed = opts.mnemonicSeed || false
   this.logFile = opts.logFile || false
-  this.logLevel = opts.logLevel || 1
+  this.logLevel = opts.logLevel || 4
   this.syncFromZero = opts.syncFromZero || false
   this.daemonAddress = opts.daemonAddress || '127.0.0.1'
   this.daemonPort = opts.daemonPort || 11898
@@ -74,19 +76,9 @@ const Walletd = function (opts) {
 
   this.db = new Storage(util.format('data/%s.json', this.appName))
   this.knownBlockCount = 0
-  this.api = new WalletdRPC({
-    host: this.bindAddress,
-    port: this.bindPort,
-    timeout: this.timeout,
-    rpcPassword: this.rpcPassword,
-    defaultMixin: this.defaultMixin,
-    defaultFee: this.defaultFee,
-    defaultBlockCount: this.defaultBlockCount,
-    decimalDivisor: this.decimalDivisor,
-    defaultFirstBlockIndex: this.defaultFirstBlockIndex,
-    defaultUnlockTime: this.defaultUnlockTime,
-    defaultFusionThreshold: this.defaultFusionThreshold
-  })
+
+  this._setupAPI()
+  this._setupWebSocket()
 
   this.on('synced', () => {
     if (this.scanIntervalPtr) return
@@ -148,7 +140,11 @@ Walletd.prototype.start = function () {
 
   this.child.on('data', (data) => {
     data = data.trim()
-    this.emit('data', data)
+    data = data.split('\r\n')
+    for (var i = 0; i < data.length; i++) {
+      this._stdio(data[i])
+      this.emit('data', data[i])
+    }
   })
 
   this.child.on('close', (exitcode) => {
@@ -157,6 +153,8 @@ Walletd.prototype.start = function () {
       this.emit('close', exitcode)
     }, 2000)
   })
+
+  this.emit('start', util.format('%s%s', this.path, args.join(' ')))
 }
 
 Walletd.prototype.stop = function () {
@@ -193,6 +191,7 @@ Walletd.prototype._stdio = function (data) {
   } else if (data.indexOf('Container loaded') !== -1) {
     this.emit('info', 'Walletd has loaded the wallet container...')
   } else if (data.indexOf('Wallet loading is finished') !== -1) {
+    this.emit('info', 'Wallet loading has finished')
     this.api.getAddresses().then((addresses) => {
       this.emit('info', util.format('Started walletd with base public address: %s', addresses[0]))
     }).catch((err) => {
@@ -224,13 +223,13 @@ Walletd.prototype._startChecks = function () {
 
   this.saveIntervalPtr = setInterval(() => {
     if (this.synced) {
-      this.save().then(() => {
+      this.api.save().then(() => {
         this.emit('save')
       }).catch((err) => {
         this.emit('error', util.format('Error when saving wallet container: %s', err))
-      }, (this.saveInterval * 1000))
+      })
     }
-  })
+  }, (this.saveInterval * 1000))
 }
 
 Walletd.prototype._triggerDown = function () {
@@ -330,6 +329,103 @@ Walletd.prototype._buildargs = function () {
   if (this.seedNode) args = util.format('%s --seed-node %s', args, this.seednode)
   if (this.hideMyPort) args = util.format('%s --hide-my-port', args)
   return args.split(' ')
+}
+
+Walletd.prototype._setupAPI = function () {
+  this.api = new WalletdRPC({
+    host: this.bindAddress,
+    port: this.bindPort,
+    timeout: this.timeout,
+    rpcPassword: this.rpcPassword,
+    defaultMixin: this.defaultMixin,
+    defaultFee: this.defaultFee,
+    defaultBlockCount: this.defaultBlockCount,
+    decimalDivisor: this.decimalDivisor,
+    defaultFirstBlockIndex: this.defaultFirstBlockIndex,
+    defaultUnlockTime: this.defaultUnlockTime,
+    defaultFusionThreshold: this.defaultFusionThreshold
+  })
+}
+
+Walletd.prototype._setupWebSocket = function () {
+  if (this.enableWebSocket) {
+    this.webSocket = new WebSocket({
+      password: this.rpcPassword,
+      port: (this.bindPort + 1)
+    })
+
+    this.webSocket.on('connection', (socket) => {
+      this.emit('info', util.format('[WEBSOCKET] Client connected with socketId: %s', socket.id))
+    })
+
+    this.webSocket.on('disconnect', (socket) => {
+      this.emit('info', util.format('[WEBSOCKET] Client disconnected with socketId: %s', socket.id))
+    })
+
+    this.webSocket.on('error', (err) => {
+      this.emit('error', util.format('[WEBSOCKET] %s', err))
+    })
+
+    this.webSocket.on('auth.success', (socket) => {
+      this.emit('info', util.format('[WEBSOCKET] Client authenticated with socketId: %s', socket.id))
+    })
+
+    this.webSocket.on('auth.failure', (socket) => {
+      this.emit('warning', util.format('[WEBSOCKET] Client failed authentication with socketId: %s', socket.id))
+    })
+
+    this.webSocket.on('ready', () => {
+      this.emit('info', util.format('Accepting WebSocket connections on %s:%s with password: %s', this.bindAddress, (this.bindPort + 1), this.webSocket.password))
+    })
+
+    this.webSocket.on('error', (err) => {
+      this.error(util.format('WebSocket Error: %s', err))
+    })
+
+    this.on('close', (exitcode) => {
+      this.webSocket.broadcast({event: 'close', data: exitcode})
+    })
+
+    this.on('data', (data) => {
+      this.webSocket.broadcast({event: 'data', data})
+    })
+
+    this.on('down', () => {
+      this.webSocket.broadcast({event: 'down'})
+    })
+
+    this.on('error', (err) => {
+      this.webSocket.broadcast({event: 'error', data: err})
+    })
+
+    this.on('info', (info) => {
+      this.webSocket.broadcast({event: 'info', data: info})
+    })
+
+    this.on('save', () => {
+      this.webSocket.broadcast({event: 'save'})
+    })
+
+    this.on('scan', (fromBlock, toBlock) => {
+      this.webSocket.broadcast({event: 'scan', data: {fromBlock, toBlock}})
+    })
+
+    this.on('status', (status) => {
+      this.webSocket.broadcast({event: 'status', data: status})
+    })
+
+    this.on('synced', () => {
+      this.webSocket.broadcast({event: 'synced'})
+    })
+
+    this.on('transaction', (transaction) => {
+      this.webSocket.broadcast({event: 'transaction', data: transaction})
+    })
+
+    this.on('warning', (warning) => {
+      this.webSocket.broadcast({event: 'info', data: warning})
+    })
+  }
 }
 
 function fixPath (oldPath) {
