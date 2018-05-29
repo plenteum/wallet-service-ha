@@ -353,6 +353,7 @@ Methods noted having options have parameters that may be *optional* or *required
 #### Parameters
 
 ```options.secretSpendKey```: Address secret spend key - *optional*
+
 ```options.publicSpendKey```: Address public spend key - *optional*
 
 **Note:** Both ```secretSpendKey``` and ```publicSpendKey``` are optional; however, you can only supply one or the other. Both are given below as **examples**.
@@ -391,6 +392,7 @@ Methods noted having options have parameters that may be *optional* or *required
 #### Parameters
 
 ```options.firstBlockIndex```: The height to start with - *required*
+
 ```options.blockCount```: How many blocks to return at maximum - *required*
 
 #### Example Data
@@ -417,9 +419,13 @@ Methods noted having options have parameters that may be *optional* or *required
 #### Parameters
 
 ```options.addresses```: Array of public addresses to scan for - *optional*
+
 ```options.blockHash```: Block hash to scan *optional/required*
+
 ```options.firstBlockIndex```: The height to start with - *optional/required*
+
 ```options.blockCount```: How many blocks to return at maximum - *required*
+
 ```options.paymendId```: Payment ID to scan for - *optional*
 
 ***Note:*** Only **one** of either ```blockHash``` or ```firstBlockIndex``` may be supplied, but not both.
@@ -444,9 +450,13 @@ Methods noted having options have parameters that may be *optional* or *required
 #### Parameters
 
 ```options.addresses```: Array of public addresses to scan for - *optional*
+
 ```options.blockHash```: Block hash to scan *optional/required*
+
 ```options.firstBlockIndex```: The height to start with - *optional/required*
+
 ```options.blockCount```: How many blocks to return at maximum - *required*
+
 ```options.paymendId```: Payment ID to scan for - *optional*
 
 ***Note:*** Only **one** of either ```blockHash``` or ```firstBlockIndex``` may be supplied, but not both.
@@ -545,12 +555,19 @@ This method creates a transfer object designed to be used with *wallet.api.sendT
 #### Parameters
 
 ```options.addresses```: Array of addresses to use for the *inputs* - *optional*
+
 ```options.transfers```: Array of transfer objects (see *wallet.api.newTransfer*) to send funds to - *required*
+
 ```options.fee```: Fee we are willing to pay for the transaction. Ex: 0.1 - *optional*
+
 ```options.unlockTime```: Blockheight to unlock the transaction at, the UTC timestamp, or ```0``` for now. - *optional*
+
 ```options.mixin```: Mixins to use - *optional*
+
 ```options.extra```: Extra data to put in the transaction - *optional*
+
 ```options.paymentId```: The payment ID for the transaction - *optional*
+
 ```options.changeAddress```: Where to send any change from the transaction to. If not specified, the first address in the wallet container is used. - *optional*
 
 #### Example Data
@@ -566,12 +583,19 @@ This method creates a transfer object designed to be used with *wallet.api.sendT
 #### Parameters
 
 ```options.addresses```: Array of addresses to use for the *inputs* - *optional*
+
 ```options.transfers```: Array of transfer objects (see *wallet.api.newTransfer*) to send funds to - *required*
+
 ```options.fee```: Fee we are willing to pay for the transaction. Ex: 0.1 - *optional*
+
 ```options.unlockTime```: Blockheight to unlock the transaction at, the UTC timestamp, or ```0``` for now. - *optional*
+
 ```options.mixin```: Mixins to use - *optional*
+
 ```options.extra```: Extra data to put in the transaction - *optional*
+
 ```options.paymentId```: The payment ID for the transaction - *optional*
+
 ```options.changeAddress```: Where to send any change from the transaction to. If not specified, the first address in the wallet container is used. - *optional*
 
 #### Example Data
@@ -612,8 +636,11 @@ This method creates a transfer object designed to be used with *wallet.api.sendT
 #### Parameters
 
 ```options.threshold```: The minimum fusion threshold amount - *optional*
+
 ```options.mixin```: Mixins to use - *optional*
+
 ```options.addresses```: Array of addresses to use for the *inputs* - *optional*
+
 ```options.destinationAddress```: The address to send the fusion transaction to - *optional/required*
 
 ***Note:*** If the container has only one address or ```addressess``` consists of one address, then ```destinationAddress``` need not be supplied. Otherwise, ```destinationAddress``` is required.
@@ -631,6 +658,7 @@ This method creates a transfer object designed to be used with *wallet.api.sendT
 #### Parameters
 
 ```options.threshold```: The minimum fusion threshold amount - *optional*
+
 ```options.addresses```: Array of addresses to use for the *inputs* - *optional*
 
 #### Example Data
