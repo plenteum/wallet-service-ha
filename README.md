@@ -682,7 +682,7 @@ This method creates a transfer object designed to be used with *wallet.api.sendT
 
 A WebSocket [socket.io](https://socket.io/) server is initialized if ```enableWebSocket``` is true in the initialization of the module. The server is created on the ```bindPort``` specified + ```1```.
 
-This server requires that the client authenticates otherwise you will **not** receive any of the below events aside from the *challenge* event. Authentication must occur within 5 seconds or the socket will be disconnected.
+This server requires that the client authenticates otherwise you will **not** receive any of the below events aside from the *challenge* event. Authentication must occur within 10 seconds or the socket will be disconnected.
 
 ### Client Initiated Events
 
