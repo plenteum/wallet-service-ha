@@ -505,7 +505,7 @@ Methods noted having options have parameters that may be *optional* or *required
 
 ### wallet.api.getTransaction(options)
 
-***Note:*** This method returns raw currency values at this time.
+***Special Note: Any and all amounts/fees will already be in HUMAN readable units. DO NOT DIVIDE AMOUNTS AGAIN unless you've specified ```decimalDivisor``` as ```1``` in the options. You have been warned.***
 
 #### Parameters
 
@@ -551,7 +551,11 @@ Methods noted having options have parameters that may be *optional* or *required
 
 This method creates a transfer object designed to be used with *wallet.api.sendTransaction*
 
+***Special Note: Any and all amounts/fees will already be in HUMAN readable units. DO NOT SUPPLY NATIVE CURRENCY AMOUNTS unless you've specified ```decimalDivisor``` as ```1``` in the options. You have been warned.***
+
 ### wallet.api.sendTransaction(options)
+
+***Special Note: Any and all amounts/fees will already be in HUMAN readable units. DO NOT SUPPLY NATIVE CURRENCY AMOUNTS unless you've specified ```decimalDivisor``` as ```1``` in the options. You have been warned.***
 
 #### Parameters
 
@@ -580,6 +584,8 @@ This method creates a transfer object designed to be used with *wallet.api.sendT
 ```
 
 ### wallet.api.createDelayedTransaction(options)
+
+***Special Note: Any and all amounts/fees will already be in HUMAN readable units. DO NOT SUPPLY NATIVE CURRENCY AMOUNTS unless you've specified ```decimalDivisor``` as ```1``` in the options. You have been warned.***
 
 #### Parameters
 
