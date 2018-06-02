@@ -10,6 +10,7 @@ const fs = require('fs')
 const path = require('path')
 const os = require('os')
 const Storage = require('node-storage')
+const nonce = require('nonce')()
 
 const Walletd = function (opts) {
   opts = opts || {}
@@ -370,6 +371,7 @@ Walletd.prototype._setupWebSocket = function () {
     })
 
     this.webSocket.on('auth.success', (socket) => {
+      this._registerWebSocketClientEvents(socket)
       this.emit('info', util.format('[WEBSOCKET] Client authenticated with socketId: %s', socket.id))
     })
 
@@ -428,6 +430,34 @@ Walletd.prototype._setupWebSocket = function () {
     this.on('warning', (warning) => {
       this.webSocket.broadcast({event: 'info', data: warning})
     })
+  }
+}
+
+Walletd.prototype._registerWebSocketClientEvents = function (socket) {
+  var that = this
+  var events = Object.getPrototypeOf(this.api)
+  events = Object.getOwnPropertyNames(events).filter((f) => {
+    return (f !== 'constructor' && !f.startsWith('_'))
+  })
+  socket.setMaxListeners(socket.getMaxListeners() + events.length)
+
+  for (var i = 0; i < events.length; i++) {
+    (function () {
+      var evt = events[i]
+      socket.on(evt, (data) => {
+        try {
+          data = JSON.parse(data)
+        } catch (e) {
+          data = {}
+        }
+        data.nonce = data.nonce || nonce()
+        that.api[evt](data).then((result) => {
+          socket.emit(evt, {nonce: data.nonce, data: result})
+        }).catch((err) => {
+          socket.emit(evt, {nonce: data.nonce, error: err.toString()})
+        })
+      })
+    })()
   }
 }
 

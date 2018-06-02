@@ -20,8 +20,8 @@ It also provides *easy access* to the walletd RPC API via native [Javascript Pro
  
 ## To Do
 
-2. Expose all walletd RPC APIs in the package to the WebSocket
-3. After the wallet container is synced, compare the wallet height to the network_height of the daemon (or public node) to detect if the wallet is out of sync.
+~~1. Expose all walletd RPC APIs in the package to the WebSocket~~
+2. After the wallet container is synced, compare the wallet height to the network_height of the daemon (or public node) to detect if the wallet is out of sync.
 
 ## Dependencies
 
@@ -684,11 +684,36 @@ A WebSocket [socket.io](https://socket.io/) server is initialized if ```enableWe
 
 This server requires that the client authenticates otherwise you will **not** receive any of the below events aside from the *challenge* event. Authentication must occur within 10 seconds or the socket will be disconnected.
 
+If the **nonce** column is *Yes* you may send a *nonce* in the payload in addition to the options defined. 
+
 ### Client Initiated Events
 
-|Event|Payload|
-|---|---|
-|challenge|*string* sha256 hash of password|
+|Event|JSON Payload|Nonce Honored|Payload|
+|---|---|---|---|
+|challenge|No|No|*string* sha256 hash of password|
+|reset|Yes|Yes|See [wallet.api.reset()](#walletapireset)|
+|save|Yes|Yes|See [wallet.api.save()](#walletapisave)|
+|getViewKey|Yes|Yes|See [wallet.api.getViewKey()](#walletapigetviewkey)|
+|getSpendKeys|Yes|Yes|See [wallet.api.getSpendKeys(options)](#walletapigetspendkeysoptions)|
+|getStatus|Yes|Yes|See [wallet.api.getStatus()](#walletapigetstatus)|
+|getAddresses|Yes|Yes|See [wallet.api.getAddresses()](#walletapigetaddresses)|
+|createAddress|Yes|Yes|See [wallet.api.createAddress(options)](#walletapicreateaddressoptions)|
+|deleteAddress|Yes|Yes|See [wallet.api.deleteAddress(options)](#walletapideleteaddressoptions)|
+|getBalance|Yes|Yes|See [wallet.api.getBalance(options)](#walletapigetbalanceoptions)|
+|getBlockHashes|Yes|Yes|See [wallet.api.getBlockHashes(options)](#walletapigetblockhashesoptions)|
+|getTransactionHashes|Yes|Yes|See [wallet.api.getTransactionHashes(options)](#walletapigettransactionhashesoptions)|
+|getTransactions|Yes|Yes|See [wallet.api.getTransactions(options)](#walletapigettranscationsoptions)|
+|getUnconfirmedTransactionHashes|Yes|Yes|See [wallet.api.getUnconfirmedTransactionHashes(options)](#walletapigetunconfirmedtransactionhashesoptions)|
+|getTransaction|Yes|Yes|See [wallet.api.getTransaction(options)](#walletapigettransactionoptions)|
+|newTransfer|Yes|Yes|See [wallet.api.newTransfer(options)](#walletapinewtransferoptions)|
+|sendTransaction|Yes|Yes|See [wallet.api.sendTransaction(options)](#walletapisendtransactionoptions)|
+|createDelayedTransaction|Yes|Yes|See [wallet.api.createDelayedTransaction(options)](#walletapicreatedelayedtransactionoptions)|
+|getDelayedTransactionHashes|Yes|Yes|See [wallet.api.getDelayedTransactionHashes(options)](#walletapigetdelayedtransactionhashes)|
+|deleteDelayedTransaction|Yes|Yes|See [wallet.api.deleteDelayedTransaction(options)](#walletapideletedelayedtransactionoptions)|
+|sendDelayedTransaction|Yes|Yes|See [wallet.api.sendDelayedTransaction(options)](#walletapisenddelayedtransactionoptions)|
+|sendFusionTransaction|Yes|Yes|See [wallet.api.sendFusionTransaction(options)](#walletapisendfusiontransactionoptions)|
+|estimateFusion|Yes|Yes|See [wallet.api.estimateFusion(options)](#walletapiestimatefusionoptions)|
+
 
 **Note:** Passing an invalid password will disconnect the socket.
 
@@ -697,15 +722,42 @@ This server requires that the client authenticates otherwise you will **not** re
 |Event|Authentication Required|Payload|
 |---|---|---|
 |challenge|No|*boolean* Always **true**|
+|close|Yes|See [Event - close](#event---close)|
+|data|Yes|See [Event - data](#event---data)|
+|down|Yes|See [Event - down](#event---down)|
+|error|Yes|See [Event - error](#event---error)|
+|info|Yes|See [Event - info](#event---info)|
+|save|Yes|See [Event - save](#event---save)|
+|scan|Yes|See [Event - scan](#event---scan)|
+|status|Yes|See [Event - status](#event---status)
+|synced|Yes|See [Event - synced](#event---synced)|
+|transaction|Yes|See [Event - transaction](#event---transaction)|
+|warning|Yes|See [Event - warning](#event---warning)|
+
+### Server Responses
+
+|Event|Nonced|Payload|
+|---|---|---|
 |auth|No|*boolean* Responds to a client initiated *challenge* event. If **true** the password was correct. If **false** the password was incorrect.
-|close|Yes|*integer* Walletd exitcode upon close|
-|data|Yes|*string* Console output of walletd|
-|down|Yes||
-|error|Yes|*string* Error message|
-|info|Yes|*string* Information message|
-|save|Yes||
-|scan|Yes|Ex. ```{fromBlock: 1, toBlock: 10}```|
-|status|Yes|See. [status event](#event---status)
-|synced|Yes||
-|transaction|Yes|See. [transaction event](#event---transaction)|
-|warning|Yes|*string* Warning message|
+|reset|Yes|See [wallet.api.reset()](#walletapireset)|
+|save|Yes|See [wallet.api.save()](#walletapisave)|
+|getViewKey|Yes|See [wallet.api.getViewKey()](#walletapigetviewkey)|
+|getSpendKeys|Yes|See [wallet.api.getSpendKeys(options)](#walletapigetspendkeysoptions)|
+|getStatus|Yes|See [wallet.api.getStatus()](#walletapigetstatus)|
+|getAddresses|Yes|See [wallet.api.getAddresses()](#walletapigetaddresses)|
+|createAddress|Yes|See [wallet.api.createAddress(options)](#walletapicreateaddressoptions)|
+|deleteAddress|Yes|See [wallet.api.deleteAddress(options)](#walletapideleteaddressoptions)|
+|getBalance|Yes|See [wallet.api.getBalance(options)](#walletapigetbalanceoptions)|
+|getBlockHashes|Yes|See [wallet.api.getBlockHashes(options)](#walletapigetblockhashesoptions)|
+|getTransactionHashes|Yes|See [wallet.api.getTransactionHashes(options)](#walletapigettransactionhashesoptions)|
+|getTransactions|Yes|See [wallet.api.getTransactions(options)](#walletapigettranscationsoptions)|
+|getUnconfirmedTransactionHashes|Yes|See [wallet.api.getUnconfirmedTransactionHashes(options)](#walletapigetunconfirmedtransactionhashesoptions)|
+|getTransaction|Yes|See [wallet.api.getTransaction(options)](#walletapigettransactionoptions)|
+|newTransfer|Yes|See [wallet.api.newTransfer(options)](#walletapinewtransferoptions)|
+|sendTransaction|Yes|See [wallet.api.sendTransaction(options)](#walletapisendtransactionoptions)|
+|createDelayedTransaction|Yes|See [wallet.api.createDelayedTransaction(options)](#walletapicreatedelayedtransactionoptions)|
+|getDelayedTransactionHashes|Yes|See [wallet.api.getDelayedTransactionHashes(options)](#walletapigetdelayedtransactionhashes)|
+|deleteDelayedTransaction|Yes|See [wallet.api.deleteDelayedTransaction(options)](#walletapideletedelayedtransactionoptions)|
+|sendDelayedTransaction|Yes|See [wallet.api.sendDelayedTransaction(options)](#walletapisenddelayedtransactionoptions)|
+|sendFusionTransaction|Yes|See [wallet.api.sendFusionTransaction(options)](#walletapisendfusiontransactionoptions)|
+|estimateFusion|Yes|See [wallet.api.estimateFusion(options)](#walletapiestimatefusionoptions)|
