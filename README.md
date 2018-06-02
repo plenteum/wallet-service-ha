@@ -736,9 +736,18 @@ If the **nonce** column is *Yes* you may send a *nonce* in the payload in additi
 
 ### Server Responses
 
+All responses except for ***auth*** return data in the same format.
+
+```javascript
+{
+  "nonce": 123456,
+  "data": <payload>
+}
+```
+
 |Event|Nonced|Payload|
 |---|---|---|
-|auth|No|*boolean* Responds to a client initiated *challenge* event. If **true** the password was correct. If **false** the password was incorrect.
+|auth|No|*boolean* Responds to a client initiated *challenge* event. If **true** the password was correct. If it was wrong you'll know soon enough.|
 |reset|Yes|See [wallet.api.reset()](#walletapireset)|
 |save|Yes|See [wallet.api.save()](#walletapisave)|
 |getViewKey|Yes|See [wallet.api.getViewKey()](#walletapigetviewkey)|
