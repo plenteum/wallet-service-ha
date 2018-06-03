@@ -25,8 +25,8 @@ It also provides *easy access* to the walletd RPC API via native [Javascript Pro
 
 ## Dependencies
 
-* NodeJS v8.x
-* walletd v0.5.0 or higher [https://github.com/turtlecoin/turtlecoin](https://github.com/turtlecoin/turtlecoin)
+* [NodeJS v8.x](https://nodejs.org/)
+* [walletd](https://github.com/turtlecoin/turtlecoin/releases) v0.5.0 or higher
 
 ## Easy Start
 
