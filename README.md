@@ -326,6 +326,18 @@ Methods noted having options have parameters that may be *optional* or *required
 }
 ```
 
+### wallet.api.getMnemonicSeed(options)
+
+#### Parameters
+
+```options.address```: Public Wallet Address - *required*
+
+#### Example Data
+
+```text
+river nudged peculiar ailments waking null tossed anchor erase jive eavesdrop veered truth wield stacking tattoo unplugs oven wipeout aptitude estate dazed observant oxygen oxygen
+```
+
 ### wallet.api.getStatus()
 
 #### Example Data
@@ -695,6 +707,7 @@ If the **nonce** column is *Yes* you may send a *nonce* in the payload in additi
 |save|Yes|Yes|See [wallet.api.save()](#walletapisave)|
 |getViewKey|Yes|Yes|See [wallet.api.getViewKey()](#walletapigetviewkey)|
 |getSpendKeys|Yes|Yes|See [wallet.api.getSpendKeys(options)](#walletapigetspendkeysoptions)|
+|getMnemonicSeed|Yes|Yes|See [wallet.api.getMnemonicSeed(options)](#walletapigetmnemonicseed|
 |getStatus|Yes|Yes|See [wallet.api.getStatus()](#walletapigetstatus)|
 |getAddresses|Yes|Yes|See [wallet.api.getAddresses()](#walletapigetaddresses)|
 |createAddress|Yes|Yes|See [wallet.api.createAddress(options)](#walletapicreateaddressoptions)|
@@ -752,6 +765,7 @@ All responses except for ***auth*** return data in the same format.
 |save|Yes|See [wallet.api.save()](#walletapisave)|
 |getViewKey|Yes|See [wallet.api.getViewKey()](#walletapigetviewkey)|
 |getSpendKeys|Yes|See [wallet.api.getSpendKeys(options)](#walletapigetspendkeysoptions)|
+|getMnemonicSeed|Yes|See [wallet.api.getMnemonicSeed(options)](#walletapigetmnemonicseed|
 |getStatus|Yes|See [wallet.api.getStatus()](#walletapigetstatus)|
 |getAddresses|Yes|See [wallet.api.getAddresses()](#walletapigetaddresses)|
 |createAddress|Yes|See [wallet.api.createAddress(options)](#walletapicreateaddressoptions)|
