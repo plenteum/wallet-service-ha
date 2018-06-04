@@ -1,13 +1,26 @@
 {
   "name": "walletd-ha",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Wraps the TurtleCoin walletd process and helps keep it up and running and ready for connections.",
   "main": "walletd-ha.js",
   "scripts": {
     "test": "standard"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brandonlehmann/walletd-ha.git"
+  },
+  "keywords": [
+    "TurtleCoin",
+    "walletd",
+    "wrapper",
+    "high-availability",
+    "API",
+    "RPC",
+    "websocket"
+  ],
   "author": "Brandon Lehmann <brandonlehmann@gmail.com>",
-  "license": "GPL",
+  "license": "GPL-3.0",
   "devDependencies": {
     "standard": "^11.0.1"
   },
@@ -15,9 +28,8 @@
     "node-pty": "^0.7.4",
     "node-storage": "0.0.7",
     "nonce": "^1.0.4",
-    "request": "^2.87.0",
-    "request-promise": "^4.2.2",
     "sha256": "^0.2.0",
-    "socket.io": "^2.1.1"
+    "socket.io": "^2.1.1",
+    "turtlecoin-rpc": "^0.5.3"
   }
 }

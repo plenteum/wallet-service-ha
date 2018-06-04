@@ -1,6 +1,6 @@
 'use strict'
 
-const WalletdRPC = require('./lib/walletd-rpc.js')
+const WalletdRPC = require('turtlecoin-rpc').Walletd
 const WebSocket = require('./lib/websocket.js')
 const pty = require('node-pty')
 const util = require('util')
