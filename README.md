@@ -20,8 +20,7 @@ It also provides *easy access* to the walletd RPC API via native [Javascript Pro
  
 ## To Do
 
-~~1. Expose all walletd RPC APIs in the package to the WebSocket~~
-2. After the wallet container is synced, compare the wallet height to the network_height of the daemon (or public node) to detect if the wallet is out of sync.
+1. After the wallet container is synced, compare the wallet height to the network_height of the daemon (or public node) to detect if the wallet is out of sync.
 
 ## Dependencies
 
@@ -141,6 +140,16 @@ wallet.write('help')
 ```
 
 ## Events
+
+### Event - *alive*
+
+This event is fired initially when the underlying walletd process is detected as being ```alive```. It will also fire when it comes back ```alive``` after the process has been restarted. In addition, it will fire on the websocket connection after a successful authentication if the service is indeed ```alive```.
+
+```javascript
+wallet.on('alive', () => {
+  // do something
+})
+```
 
 ### Event - *close*
 
@@ -735,6 +744,7 @@ If the **nonce** column is *Yes* you may send a *nonce* in the payload in additi
 |Event|Authentication Required|Payload|
 |---|---|---|
 |challenge|No|*boolean* Always **true**|
+|alive|Yes|See [Event - alive](#event--alive)|
 |close|Yes|See [Event - close](#event---close)|
 |data|Yes|See [Event - data](#event---data)|
 |down|Yes|See [Event - down](#event---down)|

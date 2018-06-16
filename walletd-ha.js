@@ -77,6 +77,7 @@ const Walletd = function (opts) {
 
   this.db = new Storage(util.format('data/%s.json', this.appName))
   this.knownBlockCount = 0
+  this.isRunning = false
 
   this._setupAPI()
   this._setupWebSocket()
@@ -116,6 +117,10 @@ const Walletd = function (opts) {
         this.emit('error', util.format('Error scanning transactions from %s to %s: %s', height, (height + cnt), err))
       })
     }, (this.scanInterval * 1000))
+  })
+
+  this.on('down', () => {
+    this.isRunning = false
   })
 }
 inherits(Walletd, EventEmitter)
@@ -245,6 +250,10 @@ Walletd.prototype._triggerDown = function () {
 }
 
 Walletd.prototype._triggerUp = function () {
+  if (!this.isRunning) {
+    this.isRunning = true
+    this.emit('alive')
+  }
   if (this.trigger) {
     clearTimeout(this.trigger)
     this.trigger = null
@@ -372,6 +381,9 @@ Walletd.prototype._setupWebSocket = function () {
 
     this.webSocket.on('auth.success', (socket) => {
       this._registerWebSocketClientEvents(socket)
+      if (this.isRunning) {
+        this.webSocket.send({socket: socket, event: 'alive'})
+      }
       this.emit('info', util.format('[WEBSOCKET] Client authenticated with socketId: %s', socket.id))
     })
 
@@ -429,6 +441,10 @@ Walletd.prototype._setupWebSocket = function () {
 
     this.on('warning', (warning) => {
       this.webSocket.broadcast({event: 'info', data: warning})
+    })
+
+    this.on('alive', () => {
+      this.webSocket.broadcast({event: 'alive'})
     })
   }
 }
