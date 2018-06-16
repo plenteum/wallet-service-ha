@@ -744,7 +744,7 @@ If the **nonce** column is *Yes* you may send a *nonce* in the payload in additi
 |Event|Authentication Required|Payload|
 |---|---|---|
 |challenge|No|*boolean* Always **true**|
-|alive|Yes|See [Event - alive](#event--alive)|
+|alive|Yes|See [Event - alive](#event---alive)|
 |close|Yes|See [Event - close](#event---close)|
 |data|Yes|See [Event - data](#event---data)|
 |down|Yes|See [Event - down](#event---down)|
