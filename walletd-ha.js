@@ -58,8 +58,8 @@ const Walletd = function (opts) {
   this.hideMyPort = opts.hideMyPort || false
 
   // Begin RPC API options
-  this.defaultMixin = opts.defaultMixin || 6
-  this.defaultFee = opts.defaultFee || 0.1
+  this.defaultMixin = (opts.defaultMixin !== undefined) ? opts.defaultMixin : 7
+  this.defaultFee = (opts.defaultFee !== undefined) ? opts.defaultFee : 0.1
   this.defaultBlockCount = opts.defaultBlockCount || 1
   this.decimalDivisor = opts.decimalDivisor || 100
   this.defaultFirstBlockIndex = opts.defaultFirstBlockIndex || 1
