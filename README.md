@@ -76,7 +76,6 @@ var wallet = new Walletd({
   
   // Standard walletd options start here
   config: false, // the path to a walletd config file -- if you so choose
-  localNode: false, // If set to true, activates the in-process walletd daemon/node
   bindAddress: '127.0.0.1', // The IP address that walletd will bind to
   bindPort: 8070, // The port that walletd will bind to
   rpcPassword: false, // You really should use an RPC password
@@ -97,19 +96,6 @@ var wallet = new Walletd({
   defaultFirstBlockIndex: 1, // the default first block index we will use when it is required
   defaultUnlockTime: 0, // the default unlockTime for transactions
   defaultFusionThreshold: 10000000, // the default fusionThreshold for fusion transactions
-  
-  // The following options are for when we run the in-process node
-  testnet: false, // If true, activates the testnet logic -- only important if localNode is true
-  dataDir: '~/.TurtleCoin', // If the localNode is used, this is where the blockchain data will be stored
-  p2pBindIp: '0.0.0.0', // What IP to bind the P2P network to
-  p2pBindPort: 11897, // What Port to bind the P2P network to
-  p2pExternalPort: 0, // What External Port to bind the P2P network to for those behind NAT
-  allowLocalIp: false, // Add our own IP to the peer list?
-  peers: false, // Manually add the peer(s) to the list. Allows for a string or an Array of strings.
-  priorityNodes: false, // Manually add the priority node(s) to the peer list. Allows for a string or an Array of strings.
-  exclusiveNodes: false, // Only add these node(s) to the peer list. Allows for a string or an Array of strings.
-  seedNode: false, // Connect to this node to get the peer list then quit. Allows for a string.
-  hideMyPort: false, // Hide from the rest of the network
 })
 ```
 

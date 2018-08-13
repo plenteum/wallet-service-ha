@@ -29,11 +29,8 @@ const Walletd = function (opts) {
   this.enableWebSocket = opts.enableWebSocket || true
 
   // Begin walletd options
-  this.path = opts.path || path.resolve(__dirname, './walletd')
+  this.path = opts.path || path.resolve(__dirname, './turtle-service')
   this.config = opts.config || false
-  this.localNode = opts.localNode || false
-  this.testnet = opts.testnet || false
-  this.dataDir = opts.dataDir || path.resolve(os.homedir(), './.TurtleCoin')
   this.bindAddress = opts.bindAddress || '127.0.0.1'
   this.bindPort = opts.bindPort || 8070
   this.rpcPassword = opts.rpcPassword || false
@@ -51,15 +48,6 @@ const Walletd = function (opts) {
   this.syncFromZero = opts.syncFromZero || false
   this.daemonAddress = opts.daemonAddress || '127.0.0.1'
   this.daemonPort = opts.daemonPort || 11898
-  this.p2pBindIp = opts.p2pBindIp || false
-  this.p2pBindPort = opts.p2pBindPort || false
-  this.p2pExternalPort = opts.p2pExternalPort || false
-  this.allowLocalIp = opts.allowLocalIp || false
-  this.peers = opts.peers || false
-  this.priorityNodes = opts.priorityNodes || false
-  this.exclusiveNodes = opts.exclusiveNodes || false
-  this.seedNode = opts.seedNode || false
-  this.hideMyPort = opts.hideMyPort || false
 
   // Begin RPC API options
   this.defaultMixin = (opts.defaultMixin !== undefined) ? opts.defaultMixin : 7
@@ -273,9 +261,6 @@ Walletd.prototype._buildargs = function () {
 
   // Walletd specific options
   if (this.config) args = util.format('%s --config %s', args, this.config)
-  if (this.localNode) args = util.format('%s --local', args)
-  if (this.testnet) args = util.format('%s --testnet', args)
-  if (this.dataDir) args = util.format('%s --data-dir %s', args, this.dataDir)
   args = util.format('%s --bind-address %s', args, this.bindAddress)
   args = util.format('%s --bind-port %s', args, this.bindPort)
   if (this.rpcPassword) {
@@ -317,34 +302,6 @@ Walletd.prototype._buildargs = function () {
     args = util.format('%s --daemon-port %s', args, this.daemonPort)
   }
 
-  // Local node options
-  if (this.p2pBindIp) args = util.format('%s --p2p-bind-ip %s', args, this.p2pBindIp)
-  if (this.p2pBindPort) args = util.format('%s --p2p-bind-port %s', args, this.p2pBindPort)
-  if (this.p2pExternalPort) args = util.format('%s --p2p-external-port %s', args, this.p2pExternalPort)
-  if (this.allowLocalIp) args = util.format('%s --allow-local-ip', args)
-  if (Array.isArray(this.peers)) {
-    this.peers.forEach((peer) => {
-      args = util.format('%s --add-peer %s', args, peer)
-    })
-  } else if (this.peers) {
-    args = util.format('%s --add-peer %s', args, this.peers)
-  }
-  if (Array.isArray(this.priorityNodes)) {
-    this.priorityNodes.forEach((peer) => {
-      args = util.format('%s --add-priority-node %s', args, peer)
-    })
-  } else if (this.priorityNodes) {
-    args = util.format('%s --add-priority-node %s', args, this.priorityNodes)
-  }
-  if (Array.isArray(this.exclusiveNodes)) {
-    this.exclusiveNodes.forEach((peer) => {
-      args = util.format('%s --add-exclusive-node %s', args, peer)
-    })
-  } else if (this.exclusiveNodes) {
-    args = util.format('%s --add-exclusive-node %s', args, this.exclusiveNodes)
-  }
-  if (this.seedNode) args = util.format('%s --seed-node %s', args, this.seednode)
-  if (this.hideMyPort) args = util.format('%s --hide-my-port', args)
   return args.split(' ')
 }
 
