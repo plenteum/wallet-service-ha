@@ -33,10 +33,10 @@ It also provides *easy access* to the walletd RPC API via native [Javascript Pro
 You *must* copy wallet-service into the ```wallet-service-ha``` folder for the easy start process to occur.
 
 ```text
-git clone https://github.com/plenteum/wallet-serive-ha.git
-cd walletd-ha
+git clone https://github.com/plenteum/wallet-service-ha.git
+cd wallet-service-ha
 cp <wallet-service> .
-./wallet-service -g -w container.wallet-service
+./wallet-service -g -w container.wallet
 npm i & node service.js
 ```
 

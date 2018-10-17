@@ -166,6 +166,7 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 data/
-*.walletd
-*.walletd.*
+*.wallet
+*.wallet.*
 *.exe
+.vs
