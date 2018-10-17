@@ -1,10 +1,11 @@
 // Copyright (c) 2018, Brandon Lehmann, The TurtleCoin Developers
+// Copyright (c) 2018, The Plenteum Developers
 // 
 // Please see the included LICENSE file for more information.
 
 'use strict'
 
-const WalletdRPC = require('turtlecoin-rpc').Walletd
+const WalletServiceRPC = require('plenteum-rpc').WalletService
 const WebSocket = require('./lib/websocket.js')
 const pty = require('node-pty')
 const util = require('util')
@@ -16,9 +17,9 @@ const os = require('os')
 const Storage = require('node-storage')
 const nonce = require('nonce')()
 
-const Walletd = function (opts) {
+const WalletService = function (opts) {
   opts = opts || {}
-  if (!(this instanceof Walletd)) return new Walletd(opts)
+  if (!(this instanceof WalletService)) return new WalletService(opts)
 
   this.appName = opts.appName || 'default'
   this.pollingInterval = opts.pollingInterval || 10
@@ -29,7 +30,7 @@ const Walletd = function (opts) {
   this.enableWebSocket = opts.enableWebSocket || true
 
   // Begin walletd options
-  this.path = opts.path || path.resolve(__dirname, './turtle-service')
+  this.path = opts.path || path.resolve(__dirname, './wallet-service')
   this.config = opts.config || false
   this.bindAddress = opts.bindAddress || '127.0.0.1'
   this.bindPort = opts.bindPort || 8070
@@ -47,13 +48,13 @@ const Walletd = function (opts) {
   this.logLevel = opts.logLevel || 4
   this.syncFromZero = opts.syncFromZero || false
   this.daemonAddress = opts.daemonAddress || '127.0.0.1'
-  this.daemonPort = opts.daemonPort || 11898
+  this.daemonPort = opts.daemonPort || 44016
 
   // Begin RPC API options
   this.defaultMixin = (opts.defaultMixin !== undefined) ? opts.defaultMixin : 7
   this.defaultFee = (opts.defaultFee !== undefined) ? opts.defaultFee : 0.1
   this.defaultBlockCount = opts.defaultBlockCount || 1
-  this.decimalDivisor = opts.decimalDivisor || 100
+  this.decimalDivisor = opts.decimalDivisor || 100000000
   this.defaultFirstBlockIndex = opts.defaultFirstBlockIndex || 1
   this.defaultUnlockTime = opts.defaultUnlockTime || 0
   this.defaultFusionThreshold = opts.defaultFusionThreshold || 10000000
@@ -115,14 +116,14 @@ const Walletd = function (opts) {
     this.isRunning = false
   })
 }
-inherits(Walletd, EventEmitter)
+inherits(WalletService, EventEmitter)
 
-Walletd.prototype.start = function () {
-  this.emit('info', 'Attempting to start walletd...')
+WalletService.prototype.start = function () {
+  this.emit('info', 'Attempting to start wallet-service...')
   this.synced = false
   var args = this._buildargs()
   if (!args) {
-    this.emit('error', 'Could not build the walletd arguments... please check your config and try again')
+    this.emit('error', 'Could not build the wallet-service arguments... please check your config and try again')
     return false
   }
 
@@ -158,7 +159,7 @@ Walletd.prototype.start = function () {
   this.emit('start', util.format('%s%s', this.path, args.join(' ')))
 }
 
-Walletd.prototype.stop = function () {
+WalletService.prototype.stop = function () {
   if (this.saveIntervalPtr) {
     clearInterval(this.saveIntervalPtr)
     this.saveIntervalPtr = null
@@ -182,15 +183,15 @@ Walletd.prototype.stop = function () {
   }, (this.timeout * 2))
 }
 
-Walletd.prototype.write = function (data) {
+WalletService.prototype.write = function (data) {
   this._write(util.format('%s\r', data))
 }
 
-Walletd.prototype._stdio = function (data) {
+WalletService.prototype._stdio = function (data) {
   if (data.indexOf('Loading container') !== -1) {
-    this.emit('info', 'Walletd is loading the wallet container...')
+    this.emit('info', 'WalletService is loading the wallet container...')
   } else if (data.indexOf('Container loaded') !== -1) {
-    this.emit('info', 'Walletd has loaded the wallet container...')
+    this.emit('info', 'WalletService has loaded the wallet container...')
   } else if (data.indexOf('Wallet loading is finished') !== -1) {
     this.emit('info', 'Wallet loading has finished')
     this.api.getAddresses().then((addresses) => {
@@ -202,7 +203,7 @@ Walletd.prototype._stdio = function (data) {
   }
 }
 
-Walletd.prototype._startChecks = function () {
+WalletService.prototype._startChecks = function () {
   this.pollingIntervalPtr = setInterval(() => {
     this.api.getStatus().then((result) => {
       this.emit('status', result)
@@ -233,7 +234,7 @@ Walletd.prototype._startChecks = function () {
   }, (this.saveInterval * 1000))
 }
 
-Walletd.prototype._triggerDown = function () {
+WalletService.prototype._triggerDown = function () {
   if (!this.trigger) {
     this.trigger = setTimeout(() => {
       this.emit('down')
@@ -241,7 +242,7 @@ Walletd.prototype._triggerDown = function () {
   }
 }
 
-Walletd.prototype._triggerUp = function () {
+WalletService.prototype._triggerUp = function () {
   if (!this.isRunning) {
     this.isRunning = true
     this.emit('alive')
@@ -252,14 +253,14 @@ Walletd.prototype._triggerUp = function () {
   }
 }
 
-Walletd.prototype._write = function (data) {
+WalletService.prototype._write = function (data) {
   this.child.write(data)
 }
 
-Walletd.prototype._buildargs = function () {
+WalletService.prototype._buildargs = function () {
   var args = ''
 
-  // Walletd specific options
+  // WalletService specific options
   if (this.config) args = util.format('%s --config %s', args, this.config)
   args = util.format('%s --bind-address %s', args, this.bindAddress)
   args = util.format('%s --bind-port %s', args, this.bindPort)
@@ -305,8 +306,8 @@ Walletd.prototype._buildargs = function () {
   return args.split(' ')
 }
 
-Walletd.prototype._setupAPI = function () {
-  this.api = new WalletdRPC({
+WalletService.prototype._setupAPI = function () {
+  this.api = new WalletServiceRPC({
     host: this.bindAddress,
     port: this.bindPort,
     timeout: this.timeout,
@@ -321,7 +322,7 @@ Walletd.prototype._setupAPI = function () {
   })
 }
 
-Walletd.prototype._setupWebSocket = function () {
+WalletService.prototype._setupWebSocket = function () {
   if (this.enableWebSocket) {
     this.webSocket = new WebSocket({
       password: this.rpcPassword,
@@ -410,7 +411,7 @@ Walletd.prototype._setupWebSocket = function () {
   }
 }
 
-Walletd.prototype._registerWebSocketClientEvents = function (socket) {
+WalletService.prototype._registerWebSocketClientEvents = function (socket) {
   var that = this
   var events = Object.getPrototypeOf(this.api)
   events = Object.getOwnPropertyNames(events).filter((f) => {
@@ -445,4 +446,4 @@ function fixPath (oldPath) {
   return oldPath
 }
 
-module.exports = Walletd
+module.exports = WalletService

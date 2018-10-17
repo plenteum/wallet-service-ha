@@ -1,9 +1,9 @@
 'use strict'
 
-const Walletd = require('./')
+const WalletService = require('./')
 const util = require('util')
 
-var wallet = new Walletd({
+var wallet = new WalletService({
   containerFile: './container.walletd',
   rpcPassword: 'changeme'
 })
@@ -37,7 +37,7 @@ wallet.on('save', () => {
 })
 
 wallet.on('down', () => {
-  log('Walletd is not responding... stopping process...')
+  log('WalletService is not responding... stopping process...')
   wallet.stop()
 })
 
@@ -54,7 +54,7 @@ wallet.on('data', (data) => {
 })
 
 wallet.on('close', (exitcode) => {
-  log(util.format('Walletd has closed (exitcode: %s)... restarting process...', exitcode))
+  log(util.format('WalletService has closed (exitcode: %s)... restarting process...', exitcode))
   wallet.start()
 })
 

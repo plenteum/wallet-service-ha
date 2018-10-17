@@ -1,4 +1,5 @@
-# TurtleCoin Walletd High-Availability Wrapper
+
+# Plenteum WalletService High-Availability Wrapper
 
 This project is designed to wrap the walletd process on a *nix system and monitor it for hangups, locks, and etc that cause the wallet to stop responding.
 
@@ -15,7 +16,7 @@ It also provides *easy access* to the walletd RPC API via native [Javascript Pro
 5. [Documentation](#documentation)
    1. [Methods](#methods)
    2. [Events](#events)
-   3. [Walletd RPC API Interface](#walletd-rpc-api-interface)
+   3. [WalletService RPC API Interface](#wallet-service-rpc-api-interface)
    4. [WebSocket Connections](#websocket-connections)
  
 ## To Do
@@ -25,17 +26,17 @@ It also provides *easy access* to the walletd RPC API via native [Javascript Pro
 ## Dependencies
 
 * [NodeJS v8.x](https://nodejs.org/)
-* [walletd](https://github.com/turtlecoin/turtlecoin/releases) v0.5.0 or higher
+* [wallet-service](https://github.com/plenteum/plentem/releases)
 
 ## Easy Start
 
-You *must* copy walletd into the ```walletd-ha``` folder for the easy start process to occur.
+You *must* copy wallet-service into the ```wallet-service-ha``` folder for the easy start process to occur.
 
 ```text
-git clone https://github.com/brandonlehmann/walletd-ha.git
+git clone https://github.com/plenteum/wallet-serive-ha.git
 cd walletd-ha
-cp <walletd> .
-./walletd -g -w container.walletd
+cp <wallet-service> .
+./wallet-service -g -w container.wallet-service
 npm i & node service.js
 ```
 
@@ -51,7 +52,7 @@ npm install -g pm2
 pm2 startup
 pm2 install pm2-logrotate
 
-pm2 start service.js --watch --name walletd
+pm2 start service.js --watch --name wallet-service
 pm2 save
 ```
 
@@ -64,35 +65,35 @@ Practically all of the walletd command line arguments are exposed in the constru
 There are a lot of different options available so reading through the full list is to your advantage.
 
 ```javascript
-var wallet = new Walletd({
+var wallet = new WalletService({
   appName: 'default', // This defines an application name used to store some settings.
-  pollingInterval: 10, // Check to make sure that walletd is alive every x seconds
-  maxPollingFailures: 3, // After the polling checks fail x times, report the walletd process down
+  pollingInterval: 10, // Check to make sure that wallet-service is alive every x seconds
+  maxPollingFailures: 3, // After the polling checks fail x times, report the wallet-service process down
   saveInterval: 10, // issue an automatic save request every x seconds as long as the wallet is synced
   scanInterval: 5, // scan the wallet for new transactions every x seconds as long as the wallet is synced
   timeout: 2000, // consider RPC calls timed out after x milliseconds
-  path: './walletd', // the path to the walletd binary
+  path: './wallet-service', // the path to the wallet-service binary
   enableWebSocket: true, // enable the WebSocket server at bindPort + 1
   
-  // Standard walletd options start here
-  config: false, // the path to a walletd config file -- if you so choose
-  bindAddress: '127.0.0.1', // The IP address that walletd will bind to
-  bindPort: 8070, // The port that walletd will bind to
+  // Standard wallet-service options start here
+  config: false, // the path to a wallet-service config file -- if you so choose
+  bindAddress: '127.0.0.1', // The IP address that wallet-service will bind to
+  bindPort: 8070, // The port that wallet-service will bind to
   rpcPassword: false, // You really should use an RPC password
   rpcLegacySecurity: false, // Turning this to true, removes the requirement for a RPC password, either rpcPassword or rpcLegacySecurity MUST be set
-  containerFile: false, // The path to your walletd container file
-  containerPassword: false, // The password to your walletd container file
-  logFile: false, // The path to the log file you would like walletd to keep
-  logLevel: 4, // The log level to use with walletd
-  syncFromZero: false, // If set to true, will tell walletd to always sync the container from zero.
+  containerFile: false, // The path to your wallet-service container file
+  containerPassword: false, // The password to your wallet-service container file
+  logFile: false, // The path to the log file you would like wallet-service to keep
+  logLevel: 4, // The log level to use with wallet-service
+  syncFromZero: false, // If set to true, will tell wallet-service to always sync the container from zero.
   daemonAddress: '127.0.0.1', // When using a remote node (localNode === false), provide the IP address or hostname of the daemon here
   daemonPort: 11898, // Remote daemon port
   
   // RPC API default values
-  defaultMixin: 7, // the default mixin to use for transactions
+  defaultMixin: 0, // the default mixin to use for transactions
   defaultFee: 0.1, // the default transaction fee for transactions
   defaultBlockCount: 1, // the default number of blocks when blockCount is required
-  decimalDivisor: 100, // Currency has many decimal places?
+  decimalDivisor: 100000000 // Currency has many decimal places?
   defaultFirstBlockIndex: 1, // the default first block index we will use when it is required
   defaultUnlockTime: 0, // the default unlockTime for transactions
   defaultFusionThreshold: 10000000, // the default fusionThreshold for fusion transactions
@@ -103,7 +104,7 @@ var wallet = new Walletd({
 
 ### wallet.start()
 
-Starts walletd and starts monitoring the process.
+Starts wallet-service and starts monitoring the process.
 
 ```javascript
 wallet.start()
@@ -111,7 +112,7 @@ wallet.start()
 
 ### wallet.stop()
 
-Stops walletd and halts all monitoring processes.
+Stops wallet-service and halts all monitoring processes.
 
 ```javascript
 wallet.stop()
@@ -119,7 +120,7 @@ wallet.stop()
 
 ### wallet.write(text)
 
-If you really must write text to the actual walletd console, you can do so with this method. You'll need to parse the output of the *data* event as defined below.
+If you really must write text to the actual wallet-service console, you can do so with this method. You'll need to parse the output of the *data* event as defined below.
 
 ```javascript
 wallet.write('help')
@@ -129,7 +130,7 @@ wallet.write('help')
 
 ### Event - *alive*
 
-This event is fired initially when the underlying walletd process is detected as being ```alive```. It will also fire when it comes back ```alive``` after the process has been restarted. In addition, it will fire on the websocket connection after a successful authentication if the service is indeed ```alive```.
+This event is fired initially when the underlying wallet-service process is detected as being ```alive```. It will also fire when it comes back ```alive``` after the process has been restarted. In addition, it will fire on the websocket connection after a successful authentication if the service is indeed ```alive```.
 
 ```javascript
 wallet.on('alive', () => {
@@ -139,7 +140,7 @@ wallet.on('alive', () => {
 
 ### Event - *close*
 
-This event is fired when the underlying walletd process closes, dies, is killed for whatever reason. Usually, when this occurs we want to restart the process with ```wallet.start()```
+This event is fired when the underlying wallet-service process closes, dies, is killed for whatever reason. Usually, when this occurs we want to restart the process with ```wallet.start()```
 
 ```javascript
 wallet.on('close', (exitcode) => {
@@ -149,7 +150,7 @@ wallet.on('close', (exitcode) => {
 
 ### Event - *data*
 
-Provides the actual console output of walletd on a per line basis.
+Provides the actual console output of wallet-service on a per line basis.
 
 ```javascript
 wallet.on('data', (data) => {
@@ -159,7 +160,7 @@ wallet.on('data', (data) => {
 
 ### Event - *down*
 
-This event is fired when we detected that walletd appears **down**. It means that it is not responding to RPC requests. If you want to make it automatically restart walletd when this occurs, simply ```wallet.stop()``` in the event.
+This event is fired when we detected that wallet-service appears **down**. It means that it is not responding to RPC requests. If you want to make it automatically restart walletd when this occurs, simply ```wallet.stop()``` in the event.
 
 ```javascript
 wallet.on('down', () => {
@@ -209,7 +210,7 @@ wallet.on('scan', (fromBlock, toBlock) => {
 
 ### Event - *status*
 
-This event is fired every polling cycle. It returns the equivalent of the walletd *getStatus* API call.
+This event is fired every polling cycle. It returns the equivalent of the wallet-service *getStatus* API call.
 
 ```javascript
 wallet.on('status', (status) => {
@@ -230,7 +231,7 @@ wallet.on('status', (status) => {
 
 ### Event - *synced*
 
-This event is fired when walletd is fully synchronized with the network.
+This event is fired when wallet-service is fully synchronized with the network.
 
 ```javascript
 wallet.on('synced', () => {
@@ -240,7 +241,7 @@ wallet.on('synced', () => {
 
 ### Event - *transaction*
 
-This event is fired for **each** transaction that walletd says belongs to us. It contains the information for each ***transfer*** in the transaction rolled up into a single object for each ***transfer*** with one small addition of ```inbound``` which is a *boolean*. It will ***only*** fire for the portion(s) of the transaction where the transfer **belong** to the wallet container.
+This event is fired for **each** transaction that wallet-service says belongs to us. It contains the information for each ***transfer*** in the transaction rolled up into a single object for each ***transfer*** with one small addition of ```inbound``` which is a *boolean*. It will ***only*** fire for the portion(s) of the transaction where the transfer **belong** to the wallet container.
 
 ***Special Note: Any and all amounts/fees will already be in HUMAN readable units. DO NOT DIVIDE THEM AGAIN unless you've specified ```decimalDivisor``` as ```1``` in the options. You have been warned.***
 
@@ -282,7 +283,7 @@ wallet.on('warning', (warn) => {
 })
 ```
 
-## Walletd RPC API Interface
+## WalletService RPC API Interface
 
 As we can actually run this wrapper inside another nodeJS project, we expose all of the walletd RPC API commands via the ```wallet.api``` property. Each of the below methods are [Javascript Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises). For safety sake, **always** handle your promise catches as we do use them properly.
 
@@ -785,6 +786,7 @@ All responses except for ***auth*** return data in the same format.
 
 ```
 Copyright (C) 2018 Brandon Lehmann, The TurtleCoin Developers
+Copyright (C) 2018 The Plenteum Developers
 
 Please see the included LICENSE file for more information.
 ```
